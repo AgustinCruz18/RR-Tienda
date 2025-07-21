@@ -1,6 +1,5 @@
 // backend/models/usuario.model.js
 const mongoose = require('mongoose');
-
 const usuarioSchema = new mongoose.Schema({
     nombre: { type: String, required: true },
     apellido: { type: String, required: true },
