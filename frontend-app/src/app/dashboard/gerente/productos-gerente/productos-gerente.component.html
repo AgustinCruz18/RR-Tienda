@@ -1,0 +1,142 @@
+<div class="p-6 bg-gray-50 min-h-screen">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Gestión de Productos</h2>
+        <button (click)="prepararParaCrear()"
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
+            &#43; Registrar Nuevo Producto
+        </button>
+    </div>
+
+    <div *ngIf="mostrarFormulario" class="bg-white p-6 rounded-lg shadow-md mb-8 border border-gray-200">
+        <h3 class="text-xl font-semibold mb-4">{{ modoEdicion ? 'Editando Producto' : 'Nuevo Producto' }}</h3>
+        <form [formGroup]="formProducto" (ngSubmit)="guardarProducto()">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <input formControlName="codigo" placeholder="Código (único)" class="w-full border p-2 rounded" />
+                <input formControlName="nombre" placeholder="Nombre del Producto" class="w-full border p-2 rounded" />
+                <input formControlName="categoria" placeholder="Categoría" class="w-full border p-2 rounded" />
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                <!-- Actualizado: Añadido label y div para el campo de stock -->
+                <div>
+                    <label class="block text-sm font-medium mb-1">Stock (paquetes)</label>
+                    <input type="number" formControlName="stock" class="w-full border p-2 rounded" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Unidades por Paquete</label>
+                    <input type="number" formControlName="unidadesPorPaquete" placeholder="Unidades por Paquete"
+                        class="w-full border p-2 rounded" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Precio por Unidad</label>
+                    <input type="number" formControlName="precio" placeholder="Precio por Unidad"
+                        class="w-full border p-2 rounded" step="0.01" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Genero</label>
+                    <select formControlName="genero" class="w-full border p-2 rounded">
+                        <option value="unisex">Unisex</option>
+                        <option value="hombre">Hombre</option>
+                        <option value="mujer">Mujer</option>
+                    </select>
+
+                </div>
+
+            </div>
+            <textarea formControlName="descripcion" placeholder="Descripción del producto"
+                class="w-full border p-2 rounded mb-4" rows="2"></textarea>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center mb-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Subir Imagen</label>
+                    <input type="file" (change)="archivoSeleccionado($event)" class="w-full text-sm" />
+                    <p *ngIf="mensajeSubida" class="text-green-600 text-sm mt-1">{{ mensajeSubida }}</p>
+                    <p *ngIf="error" class="text-red-600 text-sm mt-1">{{ error }}</p>
+                </div>
+                <input formControlName="imagenUrl" placeholder="O pega la URL de la imagen aquí"
+                    class="w-full border p-2 rounded" />
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" (click)="limpiarFormulario()"
+                    class="bg-gray-300 px-4 py-2 rounded-lg">Cancelar</button>
+                <button type="submit" [disabled]="formProducto.invalid"
+                    class="bg-green-600 text-white px-4 py-2 rounded-lg disabled:bg-gray-400">
+                    {{ modoEdicion ? 'Guardar Cambios' : 'Crear Producto' }}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white p-4 rounded-lg shadow-sm mb-4">
+        <form [formGroup]="formFiltros" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input formControlName="query" placeholder="Buscar por nombre o código..."
+                class="w-full border p-2 rounded-md" />
+            <!-- Nuevo select para el filtro de género -->
+            <select formControlName="genero" class="w-full border p-2 rounded-md">
+                <option value="">Todos los géneros</option>
+                <option value="unisex">Unisex</option>
+                <option value="hombre">Hombre</option>
+                <option value="mujer">Mujer</option>
+            </select>
+            <select formControlName="categoria" class="w-full border p-2 rounded-md">
+                <option value="">Todas las categorías</option>
+                <option *ngFor="let cat of categoriasUnicas" [value]="cat">{{ cat }}</option>
+            </select>
+            <button type="button" (click)="formFiltros.reset({ query: '', categoria: '', genero: '' })"
+                class="bg-gray-200 px-4 py-2 rounded-md">Limpiar Filtros</button>
+        </form>
+    </div>
+
+    <div class="overflow-x-auto bg-white rounded-lg shadow">
+        <table class="w-full min-w-[1000px]">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="p-3 text-left text-sm font-semibold">Imagen</th>
+                    <th class="p-3 text-left text-sm font-semibold">Nombre / Código</th>
+                    <th class="p-3 text-left text-sm font-semibold">Categoría / Género</th>
+                    <th class="p-3 text-left text-sm font-semibold">Precio</th>
+                    <th class="p-3 text-left text-sm font-semibold">Stock</th>
+                    <th class="p-3 text-left text-sm font-semibold">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let prod of productosFiltrados" class="border-b hover:bg-gray-50">
+                    <td class="p-2"><img [src]="prod.imagenUrl || 'https://via.placeholder.com/60'"
+                            alt="{{ prod.nombre }}" class="w-12 h-12 object-cover rounded"></td>
+                    <td class="p-2">
+                        <div class="font-bold">{{ prod.nombre }}</div>
+                        <div class="text-xs text-gray-600 font-mono">{{ prod.codigo }}</div>
+                    </td>
+                    <td class="p-2">
+                        <div>{{ prod.categoria }}</div>
+                        <div class="text-xs capitalize">{{ prod.genero }}</div>
+                    </td>
+                    <td class="p-2">${{ prod.precio | number:'1.2-2' }}</td>
+                    <td class="p-2">
+                        <div>{{ prod.stock }} paq.</div>
+                        <div class="text-xs">{{ prod.unidadesDisponibles }} unid.</div>
+                    </td>
+                    <td class="p-2">
+                        <div class="flex gap-2">
+                            <button (click)="prepararParaEditar(prod)"
+                                class="bg-yellow-400 text-white px-2 py-1 rounded text-xs">Editar</button>
+                            <!-- Actualizado: Botón para abrir el modal de stock -->
+                            <button (click)="abrirModalStock(prod)"
+                                class="bg-green-500 text-white px-2 py-1 rounded text-xs">Añadir Stock</button>
+                            <button (click)="eliminarProducto(prod._id)"
+                                class="bg-red-500 text-white px-2 py-1 rounded text-xs">Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="cargando" class="p-4 text-center">Cargando productos...</div>
+        <div *ngIf="!cargando && productosFiltrados.length === 0" class="p-4 text-center text-gray-500">No se
+            encontraron productos con los filtros actuales.</div>
+    </div>
+</div>
+
+<!-- Añadido: El modal de edición de stock -->
+<app-stock-edit-modal *ngIf="mostrarModalStock" [producto]="productoParaModal" (close)="cerrarModalStock()"
+    (save)="guardarCambiosStock($event)">
+</app-stock-edit-modal>

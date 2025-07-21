@@ -1,0 +1,56 @@
+<div class="p-4 max-w-4xl mx-auto">
+    <h2 class="text-xl font-semibold mb-4">Reportes de Ventas</h2>
+
+    <form [formGroup]="form" (ngSubmit)="filtrarVentas()" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div>
+            <label class="block mb-1">Producto</label>
+            <select formControlName="productoId" class="w-full border p-2 rounded">
+                <option value="">Todos</option>
+                <option *ngFor="let prod of productos" [value]="prod._id">{{ prod.nombre }}</option>
+            </select>
+        </div>
+        <div>
+            <label class="block mb-1">Desde</label>
+            <input type="date" formControlName="desde" class="w-full border p-2 rounded" />
+        </div>
+        <div>
+            <label class="block mb-1">Hasta</label>
+            <input type="date" formControlName="hasta" class="w-full border p-2 rounded" />
+        </div>
+
+        <div class="md:col-span-3 text-right">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Filtrar
+            </button>
+        </div>
+    </form>
+
+    <div *ngIf="ventasFiltradas.length > 0">
+        <table class="w-full table-auto border-collapse">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="p-2 border">Producto</th>
+                    <th class="p-2 border">Cantidad</th>
+                    <th class="p-2 border">Total</th>
+                    <th class="p-2 border">Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let venta of ventasFiltradas">
+                    <td class="p-2 border">{{ venta.producto.nombre }}</td>
+                    <td class="p-2 border">{{ venta.cantidad }}</td>
+                    <td class="p-2 border">${{ venta.total.toFixed(2) }}</td>
+                    <td class="p-2 border">{{ venta.fecha | date: 'shortDate' }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="mt-4 font-bold text-right">
+            Total recaudado: ${{ totalVentas.toFixed(2) }}
+        </div>
+    </div>
+
+    <div *ngIf="ventasFiltradas.length === 0" class="text-gray-600 mt-4">
+        No se encontraron ventas para los filtros seleccionados.
+    </div>
+</div>

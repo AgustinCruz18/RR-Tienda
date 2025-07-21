@@ -1,0 +1,40 @@
+/* La mayoría de los estilos están definidos con clases de Tailwind CSS en el archivo HTML.
+  Este archivo CSS se usa para estilos personalizados que son difíciles de lograr solo con Tailwind,
+  como animaciones complejas o propiedades específicas del navegador.
+*/
+
+/* Animación para el spinner de carga */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f4f6;
+    /* gris claro */
+    border-top: 5px solid #3b82f6;
+    /* azul */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Clase para truncar la descripción del producto a un número específico de líneas.
+  Esto mejora la consistencia visual de las tarjetas.
+*/
+.producto-descripcion {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    /* Para navegadores antiguos (Safari) */
+    line-clamp: 3;
+    /* <-- SOLUCIÓN: Propiedad estándar para navegadores modernos */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

@@ -1,0 +1,35 @@
+<div class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50" (click)="onClose()">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm" (click)="$event.stopPropagation()">
+        <h3 class="text-xl font-bold mb-1">Gestionar Stock</h3>
+        <p class="text-sm text-gray-600 mb-4">
+            Producto: <span class="font-semibold">{{ producto?.nombre }}</span>
+        </p>
+
+        <form [formGroup]="formStock" (ngSubmit)="onSave()">
+            <div class="mb-4">
+                <label class="block mb-1 text-sm font-medium">Paquetes a Agregar</label>
+                <input type="number" formControlName="stockToAdd" class="w-full border p-2 rounded" />
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-1 text-sm font-medium">Unidades por Paquete del nuevo stock</label>
+                <input type="number" formControlName="newUnits" class="w-full border p-2 rounded" />
+            </div>
+
+            <div class="mb-4">
+                <label class="inline-flex items-center">
+                    <input type="checkbox" formControlName="actualizarUnidades" class="mr-2" />
+                    Aplicar como nuevo valor permanente
+                </label>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" (click)="onClose()" class="bg-gray-300 px-4 py-2 rounded-lg">Cancelar</button>
+                <button type="submit" [disabled]="formStock.invalid"
+                    class="bg-green-600 text-white px-4 py-2 rounded-lg disabled:bg-gray-400">
+                    Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

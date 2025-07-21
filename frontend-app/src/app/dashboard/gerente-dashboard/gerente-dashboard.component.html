@@ -1,0 +1,30 @@
+<div class="p-6">
+    <h1 class="text-2xl font-bold text-green-600">Panel de Gerente</h1>
+    <p>Gestioná productos y registrá ventas manuales.</p>
+</div>
+<div class="p-4 max-w-6xl mx-auto">
+    <h2 class="text-2xl font-semibold mb-4">Panel del Gerente</h2>
+
+    <nav class="mb-4 flex gap-4">
+        <button (click)="vista = 'productos'" class="btn">Productos</button>
+        <button (click)="vista = 'ventas'" class="btn">Registrar Venta</button>
+        <button (click)="vista = 'historial'" class="btn">Historial</button>
+        <button (click)="vista = 'reportes'" class="btn">Reportes</button>
+    </nav>
+
+    <div *ngIf="vista === 'productos'">
+        <app-productos-gerente></app-productos-gerente>
+    </div>
+
+    <div *ngIf="vista === 'ventas'">
+        <app-registrar-venta></app-registrar-venta>
+    </div>
+
+    <div *ngIf="vista === 'historial'">
+        <app-historial-ventas></app-historial-ventas>
+    </div>
+
+    <div *ngIf="vista === 'reportes'">
+        <app-reportes-ventas></app-reportes-ventas>
+    </div>
+</div>

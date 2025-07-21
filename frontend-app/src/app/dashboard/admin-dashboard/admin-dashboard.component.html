@@ -1,0 +1,47 @@
+<div class="p-6">
+    <h1 class="text-2xl font-bold text-blue-600 mb-4">Panel de Administrador</h1>
+    <p class="mb-6">Accede a gestión de usuarios, productos y reportes.</p>
+
+    <h2 class="text-xl font-semibold mb-2">Lista de usuarios</h2>
+
+    <div *ngIf="loading" class="text-gray-500">Cargando usuarios...</div>
+
+    <div *ngIf="!loading && usuarios.length" class="overflow-x-auto">
+        <table class="w-full border mt-4 text-sm min-w-[600px]">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="py-2 px-4 border">Nombre</th>
+                    <th class="py-2 px-4 border">Apellido</th>
+                    <th class="py-2 px-4 border hidden sm:table-cell">Email</th> <!-- Oculto en xs -->
+                    <th class="py-2 px-4 border">Rol</th>
+                    <th class="py-2 px-4 border text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let usuario of usuarios" class="hover:bg-gray-100">
+                    <td class="py-2 px-4 border">{{ usuario.nombre }}</td>
+                    <td class="py-2 px-4 border">{{ usuario.apellido }}</td>
+                    <td class="py-2 px-4 border hidden sm:table-cell">{{ usuario.email }}</td>
+                    <td class="py-2 px-4 border">{{ usuario.rol }}</td>
+                    <td class="py-2 px-4 border text-center">
+                        <button (click)="abrirModal(usuario)"
+                            class="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded mr-2">
+                            ✏️ Editar
+                        </button>
+                        <button *ngIf="usuario._id" (click)="eliminarUsuario(usuario._id)"
+                            class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">
+                            🗑️ Eliminar
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="!loading && !usuarios.length" class="text-gray-500 mt-4">No hay usuarios registrados.</div>
+
+    <!-- Modal de edición -->
+    <app-user-edit-modal *ngIf="modalAbierto" [usuario]="usuarioSeleccionado" (onClose)="cerrarModal()"
+        (onSave)="actualizarUsuario($event)">
+    </app-user-edit-modal>
+</div>

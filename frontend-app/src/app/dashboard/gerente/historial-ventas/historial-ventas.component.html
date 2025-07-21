@@ -1,0 +1,29 @@
+<div class="p-4">
+    <h2 class="text-xl font-semibold mb-4">Historial de Ventas</h2>
+
+    <div *ngIf="cargando" class="text-gray-500">Cargando ventas...</div>
+    <div *ngIf="error" class="text-red-600">{{ error }}</div>
+
+    <table *ngIf="!cargando && ventas.length" class="min-w-full border mt-4">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="p-2 border">Producto</th>
+                <th class="p-2 border">Cantidad</th>
+                <th class="p-2 border">Total</th>
+                <th class="p-2 border">Registrado por</th>
+                <th class="p-2 border">Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let venta of ventas" class="hover:bg-gray-50">
+                <td class="p-2 border">{{ venta.producto.nombre }}</td>
+                <td class="p-2 border">{{ venta.cantidad }}</td>
+                <td class="p-2 border">{{ venta.total | currency:'ARS' }}</td>
+                <td class="p-2 border">{{ venta.registradaPor.nombre }} {{ venta.registradaPor.apellido }}</td>
+                <td class="p-2 border">{{ venta.fecha | date:'short' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p *ngIf="!cargando && !ventas.length" class="text-gray-500 mt-4">No hay ventas registradas.</p>
+</div>

@@ -1,0 +1,18 @@
+<nav class="bg-blue-600 text-white px-4 py-2 flex justify-between items-center">
+    <div>
+        <a routerLink="/" class="font-bold text-xl">R.R</a>
+    </div>
+    <div class="flex gap-4 items-center">
+        <div *ngIf="usuario.email" class="flex gap-4 items-center">
+            <span>{{ usuario.email }} ({{ usuario.rol }})</span>
+            <button (click)="logout()" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded">
+                Cerrar sesión
+            </button>
+        </div>
+        <div *ngIf="!usuario.email">
+            <a routerLink="/login" class="bg-green-500 hover:bg-green-600 px-3 py-1 rounded">
+                Iniciar sesión
+            </a>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,96 @@
+<div class="bg-gray-50 min-h-screen font-sans">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Nuestros Productos</h1>
+        <p class="text-center text-gray-500 mb-12">¡Explora calidad y variedad al mejor precio!</p>
+
+        <!-- Filtros -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+            <input type="text" [(ngModel)]="busqueda" (input)="aplicarFiltros()"
+                placeholder="Buscar productos por nombre o categoría..."
+                class="w-full sm:w-1/3 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+
+            <select [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()"
+                class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-400">
+                <option value="">Todas las categorías</option>
+                <option *ngFor="let cat of categoriasUnicas" [value]="cat">{{ cat }}</option>
+            </select>
+
+            <select [(ngModel)]="generoSeleccionado" (change)="aplicarFiltros()"
+                class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-400">
+                <option value="">Todos los géneros</option>
+                <option value="hombre">Hombre</option>
+                <option value="mujer">Mujer</option>
+                <option value="unisex">Unisex</option>
+            </select>
+            <!-- Botón para limpiar filtros -->
+            <button type="button" (click)="limpiarFiltros()"
+                class="bg-gray-200 px-4 py-2 rounded-md hover:bg-gray-300 transition duration-300">Limpiar
+                Filtros</button>
+        </div>
+
+        <div *ngIf="loading" class="text-center py-12">Cargando productos...</div>
+        <div *ngIf="error" class="text-center text-red-600 py-6">{{ error }}</div>
+
+        <div *ngIf="!loading && !error">
+            <!-- Productos filtrados -->
+            <div *ngIf="productosFiltrados.length > 0; else noProductos"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div *ngFor="let producto of productosFiltrados"
+                    class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+                    <div class="relative">
+                        <img *ngIf="producto.imagenUrl" [src]="producto.imagenUrl" alt="{{ producto.nombre }}"
+                            (click)="abrirModal(producto.imagenUrl)"
+                            class="w-full h-56 object-cover cursor-pointer hover:scale-105 transition-transform" />
+                        <div *ngIf="!producto.imagenUrl"
+                            class="w-full h-56 bg-gray-200 flex items-center justify-center text-gray-400 text-4xl">📦
+                        </div>
+
+                        <!-- Estado de stock -->
+                        <span *ngIf="producto.unidadesDisponibles > 10"
+                            class="absolute top-3 right-3 bg-green-600 text-white text-xs px-2 py-1 rounded-full">Disponible</span>
+                        <span *ngIf="producto.unidadesDisponibles > 0 && producto.unidadesDisponibles <= 10"
+                            class="absolute top-3 right-3 bg-yellow-400 text-gray-900 text-xs px-2 py-1 rounded-full">Poco
+                            stock</span>
+                        <span *ngIf="producto.unidadesDisponibles === 0"
+                            class="absolute top-3 right-3 bg-red-600 text-white text-xs px-2 py-1 rounded-full">Agotado</span>
+                    </div>
+
+                    <div class="p-4 flex flex-col gap-2">
+                        <h2 class="text-lg font-semibold text-gray-800 truncate" [title]="producto.nombre">{{
+                            producto.nombre }}</h2>
+                        <p class="text-2xl text-emerald-600 font-bold">${{ producto.precio | number:'1.2-2' }}</p>
+
+                        <p class="text-sm text-gray-600">
+                            <span class="font-medium">{{ producto.unidadesPorPaquete }}</span> unidades por paquete
+                        </p>
+
+                        <div class="flex gap-2 text-xs mt-2">
+                            <span *ngIf="producto.categoria" class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{{
+                                producto.categoria }}</span>
+                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full capitalize">{{
+                                producto.genero }}</span>
+                        </div>
+
+                        <p class="text-sm text-gray-600 line-clamp-3">{{ producto.descripcion }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <ng-template #noProductos>
+                <div class="text-center py-12 text-gray-500 text-lg">
+                    No se encontraron productos que coincidan con tu búsqueda.
+                </div>
+            </ng-template>
+        </div>
+    </div>
+
+    <!-- Modal de imagen ampliada -->
+    <div *ngIf="imagenAmpliadaUrl" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+        (click)="cerrarModal()">
+        <div class="max-w-3xl max-h-[80vh] relative" (click)="$event.stopPropagation()">
+            <img [src]="imagenAmpliadaUrl" alt="Imagen ampliada" class="rounded-xl shadow-2xl max-w-full max-h-[80vh]">
+            <button (click)="cerrarModal()"
+                class="absolute top-3 right-3 text-white text-2xl font-bold bg-black bg-opacity-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-opacity-70">×</button>
+        </div>
+    </div>
+</div>

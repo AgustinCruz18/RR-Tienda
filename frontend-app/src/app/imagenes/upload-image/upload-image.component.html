@@ -1,0 +1,11 @@
+<div class="upload-container">
+    <input type="file" (change)="archivoSeleccionado($event)" accept="image/*" />
+
+    <p *ngIf="mensaje" class="text-green-600">{{ mensaje }}</p>
+    <p *ngIf="error" class="text-red-600">{{ error }}</p>
+
+    <div *ngIf="imagenUrl" class="preview mt-3">
+        <p>Imagen subida:</p>
+        <img [src]="imagenUrl" alt="Imagen subida" style="max-width: 300px;" />
+    </div>
+</div>
